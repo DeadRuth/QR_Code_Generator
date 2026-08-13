@@ -2,6 +2,15 @@ import qrcode
 from qrcode.constants import (ERROR_CORRECT_L, ERROR_CORRECT_M,
                               ERROR_CORRECT_Q, ERROR_CORRECT_H)
 from datetime import datetime
+import logging
+
+# Настройка логирования в файл
+logging.basicConfig(
+    filename="qr_generator.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 # --- Состояние программы: значения по умолчанию ---
 data = ""                        # параметры URL или текст
@@ -59,8 +68,9 @@ def enter_data():
         return
 
     data = user_input
+    logging.info(f"Пользователь ввел данные для QR-кода (длина: {len(user_input)} символов)")
     print("Данные сохранены.")
-    state = 2  # переходим к следующему этапу только при успехе
+    state = 2
 
 def choose_params():
     """Изменение размера, уровня коррекции и цветов с защитой от некорректного ввода."""
@@ -128,6 +138,7 @@ def choose_params():
         print("Внимание: цвета кода и фона совпадают, QR-код может не считаться.")
     
     state = 3
+    logging.info(f"Параметры обновлены: размер={box_size}, уровень={LEVEL_NAMES[error_level]}, цвет_кода={fill_color}, цвет_фона={back_color}")
     print("Параметры обновлены.")
 
 
@@ -188,14 +199,18 @@ def generate():
         img = qr.make_image(fill_color=fill_color, back_color=back_color)
         img.save(filename)
 
+        logging.info(f"QR-код успешно сгенерирован и сохранен в файл: {filename}")
         print(f"Готово: QR-код сохранен в {filename}")
         state = 1
 
     except PermissionError:
+        logging.error(f"Ошибка сохранения: Нет прав на запись или файл '{filename}' занят другим процессом")
         print(f"Ошибка сохранения: Нет прав на запись или файл '{filename}' занят другим процессом.")
     except OSError as e:
+        logging.error(f"Ошибка файловой системы: {e}")
         print(f"Ошибка файловой системы: {e}")
     except Exception as e:
+        logging.error(f"Неизвестная ошибка при генерации: {e}")
         print(f"Неизвестная ошибка при генерации: {e}")
 
 
@@ -219,6 +234,13 @@ def main():
         else:
             print("Неизвестный пункт. Попробуй ещё раз.")
 
+# Настройка логирования в файл
+logging.basicConfig(
+    filename="qr_generator.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S"
+)
 
 # Запускаем программу
 if __name__ == "__main__":
