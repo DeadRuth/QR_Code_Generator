@@ -4,7 +4,7 @@ from qrcode.constants import (ERROR_CORRECT_L, ERROR_CORRECT_M,
 from datetime import datetime
 import logging
 
-# --- Настройка логирования в файл (только один раз!) ---
+# Настройка логирования в файл
 logging.basicConfig(
     filename="qr_generator.log",
     level=logging.INFO,
@@ -12,13 +12,13 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S"
 )
 
-# --- Состояние программы: значения по умолчанию ---
+# Состояние программы: значения по умолчанию
 data = ""                        # параметры URL или текст
 box_size = 10                    # размер клетки в пикселях
 error_level = ERROR_CORRECT_H    # уровень коррекции ошибок
 state = 1                        # текущий этап: 1 - ввод, 2 - настройка, 3 - генерация
 
-# Словарь: константа уровня коррекции -> буква для вывода на экран
+# Словарь: константа уровня коррекции 
 LEVEL_NAMES = {
     ERROR_CORRECT_L: "L",
     ERROR_CORRECT_M: "M",
